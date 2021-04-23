@@ -48,14 +48,18 @@ for i in range(len(roughgloss_boxes)):
         eng_text = box_text[box_text.find("engl trans:")+12:box_text.find("</pre>")].strip()
         eng_sentences += eng_text + "\n"
 
-# Adds youtube links
+# Adds youtube links of front view to list
+front_video_links = [] 
 for k in range(len(video_boxes)):
-    if(k in have_eng_sentence_index):
-        #print(box) #  MM-sentences-062818_TC_hb U:DEER # sign_63320
-        video_link = video_boxes[k].find('source').get('src')
-        # Only saves front view video and removes src links to the icon images of the utterance vidoes 
-        if('ss3front' in video_link and 'sign_' not in video_link):
-            video_links += video_link + "\n"
+    video_link = video_boxes[k].find('source').get('src')
+    if('ss3front' in video_link and 'sign_' not in video_link):
+        front_video_links.append(video_link)
+
+# If there exist an english sentence for a video, add the link. 
+# Sentences and vidoes should have same position due to one roughgloss box = 1 front view video.
+for j in range(len(front_video_links)):
+    if(j in have_eng_sentence_index):
+        video_links += front_video_links[j] + "\n"
 
 with open("gloss_sentences.txt", "a") as myfile:
     myfile.write(gloss_sentences)
